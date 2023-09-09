@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MonkeytypeService } from './Services/monkeytype.service';
+import { HostListener } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-monkeytype',
@@ -10,12 +12,19 @@ import { MonkeytypeService } from './Services/monkeytype.service';
 export class MonkeytypeComponent {
 
   constructor(private monkeytype : MonkeytypeService){}
+  
 
   ngOnInit() : void{
       this.generateParagraph(); 
+
       
   }
-  
+ 
+  // onKeyDown(event: any): void {
+  //   // Emit the event to an Observable for components to subscribe to
+  //   console.log(event);
+    
+  // }
 
 
   //#region Global Variable Declaration
@@ -49,25 +58,38 @@ export class MonkeytypeComponent {
       }  
   }
 
-
+  @HostListener('document:keydown', ['$event'])
   onKey(event:any){
-      console.log( ` Input Key ${event.key} and para text value is ${this.Paragraph[this.paraindex]}` ); 
-      this.checkKey(event.key) == true ? console.log("correct") : console.log("wrong"); 
+      console.log(event);
+
+      console.log( `  Input Key ${event.key} and para text value is ${this.Paragraph[this.paraindex]}` ); 
+      this.checkKey(event.key);
     }
    
 
-    checkKey(value : string) : boolean{   
+    checkKey(value : string)  {   
         //let divSection = document.getElementById('divpara');
-        let SpanElements = document.querySelectorAll('span');               
-        if(value == this.Paragraph[this.paraindex]){
-          SpanElements[this.paraindex].style.color = "green"
-          this.paraindex++;
-          return true
-        }
-        else{
-          SpanElements[this.paraindex].style.color = "red"          
-          return false 
+        let SpanElements = document.querySelectorAll('span');  
+        console.log(value);
+        
+        if(value == "Backspace" ){
+          SpanElements[this.paraindex].style.color = "black";
+          //return true
+        } 
+        else if(((value >="a" && value <= "z" ) || (value >= "A" && value <= "Z") || value == " ") && value.length == 1){
+          console.log("Value is "+value + " and para value is "+this.Paragraph[this.paraindex]);
+          
+          if(value == this.Paragraph[this.paraindex]){
+            SpanElements[this.paraindex].style.color = "green"
+            this.paraindex++;
+            //return true
+          }
+          else{
+            SpanElements[this.paraindex].style.color = "red"          
+           // return false 
+          }              
         }            
+       // return true      
     }
 
 }
